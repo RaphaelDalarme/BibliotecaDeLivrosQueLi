@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Minha Segunda Memória - Livros</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h2>📚 BioShelf</h2>
+            <nav>
+                <ul>
+                    <li><a href="#" id="menu-estante">Minha Estante</a></li>
+                    <li><a href="#" id="menu-adicionar">Novo Livro</a></li>
+                    <li><a href="#" id="menu-sagas">Sagas/Coleções</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header>
+                <h1>Backup de Memória Pessoal</h1>
+            </header>
+
+            <section id="secao-cadastro" class="card">
+                <h3>Cadastrar Novo Livro</h3>
+                <form action="/editar/{{ livro.id }}" method="POST">
+                    <div class="grid-form">
+                        <input type="text" name="titulo" value="{{ livro['titulo'] }}" required>
+                        <input type="text" name="autor" value="{{ livro['autor'] }}" required>
+                        <input type="number" name="paginas" value="{{ livro['paginas'] }}">
+                        <input type="text" name="saga" value="{{ livro['saga'] or '' }}">
+                    </div>
+                    
+                    <label>Resumo Geral:</label>
+                    <textarea name="resumo-geral">{{ livro['resumo'] }}</textarea>
+                    
+                    <div class="ia-box">
+                        <label>✨ Insight IA (Princípio 80/20):</label>
+                        <textarea name="resumo-8020">{{ livro['resumo_8020'] }}</textarea>
+                    </div>
+
+                    <button type="submit" id="btn-salvar">Salvar Alterações</button>
+                </form>
+
+           <h2 class="section-title">📚 Sagas e Coleções</h2>
+            <section class="grid-livros">
+                {% for livro in livros_saga %}
+                <div class="livro-card">
+                    <div class="card-header">
+                        <span class="tag-saga">{{ livro.saga }}</span>
+                        <a href="/editar/{{ livro.id }}" class="btn-edit" title="Editar informações">✏️</a>
+                    </div>
+                    <h4>{{ livro.titulo }}</h4>
+                    <span class="tag-autor">{{ livro.autor }}</span>
+                    <p class="resumo-curto">{{ livro.resumo[:120] }}...</p>
+                    <div class="footer-card">
+                        <span>{{ livro.paginas }} pgs</span>
+                        <button class="btn-ver-mais" onclick="abrirModal('{{ livro.titulo }}', `{{ livro.resumo_8020 }}`)">Ver 80/20</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+
+            <hr style="border: 0.5px solid var(--glass-border); margin: 50px 0;">
+
+            <h2 class="section-title">📖 Leituras Avulsas</h2>
+            <section class="grid-livros">
+                {% for livro in livros_solo %}
+                <div class="livro-card">
+                    <div class="card-header">
+                        <span></span> <a href="/editar/{{ livro.id }}" class="btn-edit">✏️</a>
+                    </div>
+                    <h4>{{ livro.titulo }}</h4>
+                    <span class="tag-autor">{{ livro.autor }}</span>
+                    <p class="resumo-curto">{{ livro.resumo[:120] }}...</p>
+                    <div class="footer-card">
+                        <span>{{ livro.paginas }} pgs</span>
+                        <button class="btn-ver-mais" onclick="abrirModal('{{ livro.titulo }}', `{{ livro.resumo_8020 }}`)">Ver 80/20</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+                    </main>
+                </div>
+
+    <div id="modal-ia" class="modal">
+    <div class="modal-content card">
+        <span class="close-button">&times;</span>
+        <h2 id="modal-titulo" style="color: var(--accent-gold);"></h2>
+        <div class="ia-box" style="width: 100%;">
+            <label>✨ INSIGHT 80/20 DA IA:</label>
+            <p id="modal-corpo" style="white-space: pre-wrap; line-height: 1.6;"></p>
+        </div>
+    </div>
+    </div>
+
+    <script>
+    function abrirModal(titulo, conteudo) {
+        document.getElementById('modal-titulo').innerText = titulo;
+        document.getElementById('modal-corpo').innerText = conteudo;
+        document.getElementById('modal-ia').style.display = "block";
+    }
+
+    // Fechar ao clicar no X ou fora da janela
+    const modal = document.getElementById('modal-ia');
+    document.querySelector('.close-button').onclick = () => modal.style.display = "none";
+    window.onclick = (event) => { if (event.target == modal) modal.style.display = "none"; }
+    </script>
+
+</body>
+</html>
